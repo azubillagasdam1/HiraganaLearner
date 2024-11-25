@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#4CAF50</item> <!-- Cambia este valor al color deseado -->
+        <item name="colorPrimaryDark">#4CAF50</item> <!-- Color de la barra de estado (opcional) -->
+        <item name="android:statusBarColor">#B0B0B0  </item>
+        <item name="buttonStyle">@style/CustomButtonStyle</item>
+    </style>
+
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">#FF5722</item> <!-- Fondo del botón -->
+        <item name="android:textColor">#FFFFFF</item> <!-- Color del texto -->
+    </style>
+</resources>

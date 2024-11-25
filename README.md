@@ -1,6 +1,0 @@
-"# HiraganaLearner" 
-"# HiraganaLearner" 
-"# HiraganaLearner" 
-"# HiraganaLearner" 
-"# HiraganaLearner" 
-"# HiraganaLearner" 

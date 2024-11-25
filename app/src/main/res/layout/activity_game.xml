@@ -1,0 +1,53 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+  <!-- Contador de puntuación -->
+  <TextView
+      android:id="@+id/scoreTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Puntuación: 0"
+      android:textSize="20sp"
+      android:textColor="@android:color/black"
+      android:gravity="center"
+      android:layout_marginBottom="16dp" />
+
+  <!-- Palabra en hiragana -->
+  <TextView
+      android:id="@+id/wordTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="80sp"
+      android:textColor="@android:color/black"
+      android:gravity="center"
+      android:textStyle="bold"
+      android:padding="16dp" />
+
+  <!-- Entrada del usuario -->
+  <EditText
+      android:id="@+id/inputEditText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="Escribe en romaji"
+      android:textSize="18sp"
+      android:inputType="text"
+      android:padding="12dp"
+      android:layout_marginTop="24dp" />
+
+  <!-- Botón de siguiente -->
+  <Button
+      android:id="@+id/nextButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text=">"
+      android:textSize="50dp"
+      android:layout_marginTop="24dp"
+      android:backgroundTint="@android:color/holo_blue_dark"
+      android:textColor="@android:color/white" />
+</LinearLayout>
