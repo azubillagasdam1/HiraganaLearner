@@ -89,6 +89,10 @@ class MainActivity : AppCompatActivity() {
         val selectedHiragana = mutableListOf<String>()
         val selectedRomaji = mutableListOf<String>()
 
+        // Recuperar selección previa desde SharedPreferences
+        val sharedPreferences = getSharedPreferences("HiraganaLearnerPrefs", MODE_PRIVATE)
+        val savedSelectedHiragana = sharedPreferences.getStringSet("selectedHiragana", emptySet()) ?: emptySet()
+
         val scrollView = ScrollView(this).apply {
             setBackgroundColor(Color.WHITE)
         }
@@ -105,7 +109,6 @@ class MainActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 setMargins(16, 16, 16, 16)
-
             }
         }
 
@@ -114,41 +117,19 @@ class MainActivity : AppCompatActivity() {
 
         fun getDefaultBackgroundColor(char: String): Int {
             return when (char) {
-                // Blanco para a, i, u, e, o
                 "あ", "い", "う", "え", "お" -> Color.WHITE
-
-                // d6ffc1 para ka, ki, ku, ke, ko, ga, gi, gu, ge, go
                 "か", "き", "く", "け", "こ", "が", "ぎ", "ぐ", "げ", "ご" -> Color.parseColor("#d6ffc1")
-
-                // f6ffc1 para sa, shi, su, se, so, za, ji, zu, ze, zo
                 "さ", "し", "す", "せ", "そ", "ざ", "じ", "ず", "ぜ", "ぞ" -> Color.parseColor("#f6ffc1")
-
-                // ffecc1 para ta, da, ji (de "dji"), chi, tsu, dzu, de, te, to, do
                 "た", "だ", "ぢ", "ち", "つ", "づ", "で", "て", "と", "ど" -> Color.parseColor("#ffecc1")
-
-                // ffcac1 para na, ni, nu, ne, no
                 "な", "に", "ぬ", "ね", "の" -> Color.parseColor("#ffcac1")
-
-                // c1ffd8 para pa, ba, ha, hi, bi, pi, pu, bu, fu, he, be, pe, po, bo, ho
                 "ぱ", "ば", "は", "ひ", "び", "ぴ", "ぷ", "ぶ", "ふ", "へ", "べ", "ぺ", "ぽ", "ぼ", "ほ" -> Color.parseColor("#c1ffd8")
-
-                // c1faff para ma, mi, mu, me, mo
                 "ま", "み", "む", "め", "も" -> Color.parseColor("#c1faff")
-
-                // c1daff para ra, ri, ru, re, ro
                 "ら", "り", "る", "れ", "ろ" -> Color.parseColor("#c1daff")
-
-                // c9c1ff para ya, yu, yo
                 "や", "ゆ", "よ" -> Color.parseColor("#c9c1ff")
-
-                // f7c1ff para combinaciones como rya, mya, pya, etc.
                 "りゃ", "みゃ", "ぴゃ", "びゃ", "ひゃ", "にゃ", "ちゃ", "じゃ", "しゃ", "ぎゃ", "きゃ",
                 "りゅ", "みゅ", "ぴゅ", "びゅ", "ひゅ", "にゅ", "ちゅ", "じゅ", "しゅ", "ぎゅ", "きゅ",
                 "りょ", "みょ", "ぴょ", "びょ", "ひょ", "にょ", "ちょ", "じょ", "しょ", "ぎょ", "きょ" -> Color.parseColor("#f7c1ff")
-
-                // Blanco para wa, wo, n
                 "わ", "を", "ん" -> Color.parseColor("#b9b9b9")
-                // Default: blanco
                 else -> Color.WHITE
             }
         }
@@ -156,7 +137,6 @@ class MainActivity : AppCompatActivity() {
         for (i in hiragana.indices step buttonsPerRow) {
             val rowLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER
                 gravity = Gravity.CENTER
             }
 
@@ -174,13 +154,18 @@ class MainActivity : AppCompatActivity() {
                             setMargins(16, 16, 16, 16)
                         }
 
-                        // Fondo inicial según la letra
+                        // Restaurar estado previo o usar color por defecto
                         background = GradientDrawable().apply {
-                            setColor(getDefaultBackgroundColor(char))
+                            setColor(if (savedSelectedHiragana.contains(char)) Color.parseColor("#74f980") else getDefaultBackgroundColor(char))
                             cornerRadius = 20f
                             setStroke(3, Color.LTGRAY)
                         }
                         elevation = 8f
+                    }
+
+                    if (savedSelectedHiragana.contains(char)) {
+                        selectedHiragana.add(char)
+                        selectedRomaji.add(transliteration)
                     }
 
                     textView.setOnClickListener {
@@ -188,7 +173,6 @@ class MainActivity : AppCompatActivity() {
                         val background = textView.background as GradientDrawable
                         if (selectedHiragana.contains(char)) {
                             background.setColor(getDefaultBackgroundColor(char)) // Fondo original
-
                             selectedHiragana.remove(char)
                             selectedRomaji.remove(transliteration)
                         } else {
@@ -196,6 +180,11 @@ class MainActivity : AppCompatActivity() {
                             selectedHiragana.add(char)
                             selectedRomaji.add(transliteration)
                         }
+
+                        // Guardar cambios en SharedPreferences
+                        sharedPreferences.edit()
+                            .putStringSet("selectedHiragana", selectedHiragana.toSet())
+                            .apply()
                     }
 
                     textViews.add(textView)
@@ -206,6 +195,46 @@ class MainActivity : AppCompatActivity() {
             mainLayout.addView(rowLayout)
         }
 
+        mainLayout.addView(selectAllButton)
+
+        val controlsLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+        }
+
+        val lowerLimitPicker = NumberPicker(this).apply {
+            minValue = 1
+            maxValue = 10
+            value = 1
+        }
+
+        val upperLimitPicker = NumberPicker(this).apply {
+            minValue = 1
+            maxValue = 10
+            value = 3
+        }
+
+        val fab = FloatingActionButton(this).apply {
+            setImageResource(android.R.drawable.ic_media_play)
+            backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff4800"))
+            setOnClickListener {
+                playClickSound()
+                if (selectedHiragana.isEmpty()) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Por favor, selecciona al menos una letra para jugar.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val intent = Intent(this@MainActivity, GameActivity::class.java)
+                    intent.putExtra("Hiragana", selectedHiragana.toTypedArray())
+                    intent.putExtra("Romaji", selectedRomaji.toTypedArray())
+                    intent.putExtra("LowerLimit", lowerLimitPicker.value)
+                    intent.putExtra("UpperLimit", upperLimitPicker.value)
+                    startActivity(intent)
+                }
+            }
+        }
         // Comportamiento del botón de seleccionar/deseleccionar todo
         selectAllButton.setOnClickListener {
             playClickSound()
@@ -229,54 +258,13 @@ class MainActivity : AppCompatActivity() {
                 selectedRomaji.addAll(romaji)
                 selectAllButton.text = "Deseleccionar todo"
             }
+
+            // Guardar cambios en SharedPreferences
+            sharedPreferences.edit()
+                .putStringSet("selectedHiragana", selectedHiragana.toSet())
+                .apply()
         }
 
-
-        mainLayout.addView(selectAllButton)
-
-        // Controles adicionales (límites, botón FAB)
-        val controlsLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER
-
-        }
-
-        val lowerLimitPicker = NumberPicker(this).apply {
-            minValue = 1
-            maxValue = 10
-            value = 1
-        }
-
-        val upperLimitPicker = NumberPicker(this).apply {
-            minValue = 1
-            maxValue = 10
-            value = 3
-        }
-
-        val fab = FloatingActionButton(this).apply {
-            setImageResource(android.R.drawable.ic_media_play)
-            backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff4800"))
-            setOnClickListener {
-                playClickSound()
-
-                // Validación: comprobar si hay al menos una letra seleccionada
-                if (selectedHiragana.isEmpty()) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Por favor, selecciona al menos una letra para jugar.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    // Si hay selección, iniciar la actividad
-                    val intent = Intent(this@MainActivity, GameActivity::class.java)
-                    intent.putExtra("Hiragana", selectedHiragana.toTypedArray())
-                    intent.putExtra("Romaji", selectedRomaji.toTypedArray())
-                    intent.putExtra("LowerLimit", lowerLimitPicker.value)
-                    intent.putExtra("UpperLimit", upperLimitPicker.value)
-                    startActivity(intent)
-                }
-            }
-        }
 
         controlsLayout.addView(lowerLimitPicker)
         controlsLayout.addView(fab)
@@ -285,7 +273,10 @@ class MainActivity : AppCompatActivity() {
         mainLayout.addView(controlsLayout)
         scrollView.addView(mainLayout)
         setContentView(scrollView)
+
     }
+
+
 
     private fun playClickSound() {
         clickSound?.let {
