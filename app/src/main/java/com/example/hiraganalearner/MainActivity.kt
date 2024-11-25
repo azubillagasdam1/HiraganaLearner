@@ -157,6 +157,7 @@ class MainActivity : AppCompatActivity() {
             val rowLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER
+                gravity = Gravity.CENTER
             }
 
             for (j in 0 until buttonsPerRow) {
@@ -206,23 +207,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Comportamiento del botón de seleccionar/deseleccionar todo
-
         selectAllButton.setOnClickListener {
-
             playClickSound()
             if (selectedHiragana.size == hiragana.size) {
                 // Deseleccionar todo
-                textViews.forEach {
-                    (it.background as GradientDrawable).setColor(Color.WHITE)
+                textViews.forEachIndexed { index, textView ->
+                    val char = hiragana[index]
+                    (textView.background as GradientDrawable).setColor(getDefaultBackgroundColor(char)) // Fondo original
                 }
                 selectedHiragana.clear()
                 selectedRomaji.clear()
                 selectAllButton.text = "Seleccionar todo"
-
             } else {
                 // Seleccionar todo
                 textViews.forEach {
-                    (it.background as GradientDrawable).setColor(Color.parseColor("#74f980"))
+                    (it.background as GradientDrawable).setColor(Color.parseColor("#74f980")) // Fondo verde
                 }
                 selectedHiragana.clear()
                 selectedHiragana.addAll(hiragana)
@@ -231,6 +230,7 @@ class MainActivity : AppCompatActivity() {
                 selectAllButton.text = "Deseleccionar todo"
             }
         }
+
 
         mainLayout.addView(selectAllButton)
 
