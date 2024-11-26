@@ -1,4 +1,5 @@
 package com.example.hiraganalearner
+import android.content.Intent
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -54,6 +55,7 @@ class GameActivity : AppCompatActivity() {
         romajiList = intent.getStringArrayExtra("Romaji") ?: emptyArray()
         lowerLimit = intent.getIntExtra("LowerLimit", 1)
         upperLimit = intent.getIntExtra("UpperLimit", 1)
+
 
         wordTextView.setOnLongClickListener {
             Toast.makeText(this, "Romaji: $currentRomajiWord", Toast.LENGTH_SHORT).show()
@@ -119,8 +121,22 @@ class GameActivity : AppCompatActivity() {
             animateBackgroundTransition(Color.parseColor("#ff0000")) // Rojo
 
             Toast.makeText(this, "La palabra era: $currentRomajiWord", Toast.LENGTH_SHORT).show()
+
+            // Verificar si es "Eliminatorio"
+            val isEliminatorio = intent.getBooleanExtra("Eliminatorio", false)
+            if (isEliminatorio) {
+                // Cambiar a MainActivity después de 0.5 segundos
+                Handler(Looper.getMainLooper()).postDelayed({
+
+                    val mainIntent = Intent(this, MainActivity::class.java)
+                    startActivity(mainIntent)
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    finish() // Cierra esta actividad
+                }, 500) // Retraso de 500 ms
+            }
         }
     }
+
 
     private fun animateBackgroundTransition(startColor: Int) {
         val duration = 500L // Duración de la transición en milisegundos

@@ -96,10 +96,20 @@ class MainActivity : AppCompatActivity() {
         val scrollView = ScrollView(this).apply {
             setBackgroundColor(Color.WHITE)
         }
+        val rightAlignedLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER //
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply{}
 
+
+        }
         val mainLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
+
         }
 
         val selectAllButton = Button(this).apply {
@@ -202,6 +212,12 @@ class MainActivity : AppCompatActivity() {
             gravity = Gravity.CENTER
         }
 
+        // Contenedor para los NumberPickers y el botón flotante
+        val pickerLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+        }
+
         val lowerLimitPicker = NumberPicker(this).apply {
             minValue = 1
             maxValue = 10
@@ -212,6 +228,20 @@ class MainActivity : AppCompatActivity() {
             minValue = 1
             maxValue = 10
             value = 3
+        }
+// Crear el CheckBox debajo de los NumberPickers
+        val eliminatorioCheckbox = android.widget.CheckBox(this).apply {
+            text = "Eliminación\uD83D\uDC80"
+            isChecked = false // Siempre desactivado inicialmente
+            isEnabled = true  // Cambiable por el usuario si es necesario
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                topMargin = 16
+
+                gravity = Gravity.CENTER
+            }
         }
 
         val fab = FloatingActionButton(this).apply {
@@ -231,6 +261,9 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra("Romaji", selectedRomaji.toTypedArray())
                     intent.putExtra("LowerLimit", lowerLimitPicker.value)
                     intent.putExtra("UpperLimit", upperLimitPicker.value)
+
+                    // Pasar el estado de la checkbox
+                    intent.putExtra("Eliminatorio", eliminatorioCheckbox.isChecked)
                     startActivity(intent)
                 }
             }
@@ -266,10 +299,15 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+
+
+
+        rightAlignedLayout.addView(eliminatorioCheckbox)
         controlsLayout.addView(lowerLimitPicker)
         controlsLayout.addView(fab)
-        controlsLayout.addView(upperLimitPicker)
 
+        controlsLayout.addView(upperLimitPicker)
+        mainLayout.addView(rightAlignedLayout)
         mainLayout.addView(controlsLayout)
         scrollView.addView(mainLayout)
         setContentView(scrollView)
