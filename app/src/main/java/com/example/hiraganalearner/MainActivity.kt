@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         "wa", "wo", "n",
         "ga", "gi", "gu", "ge", "go",
         "za", "ji", "zu", "ze", "zo",
-        "da", "ji", "zu", "de", "do",
+        "da", "dji", "dzu", "de", "do",
         "ba", "bi", "bu", "be", "bo",
         "pa", "pi", "pu", "pe", "po",
         "kya", "kyu", "kyo",
